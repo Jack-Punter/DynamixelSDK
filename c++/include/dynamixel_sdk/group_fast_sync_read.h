@@ -28,15 +28,15 @@
 namespace dynamixel
 {
 
-class WINDECLSPEC GroupFastSyncRead : public GroupSyncRead
+class WINDECLSPEC GroupFastSyncRead final : public GroupSyncRead
 {
 public:
     GroupFastSyncRead(std::shared_ptr<PortHandler> port, PacketHandler *ph, uint16_t start_address, uint16_t data_length);
-    ~GroupFastSyncRead() { clearParam(); }
+    ~GroupFastSyncRead() final { clearParam(); }
 
-    int txPacket();
-    int rxPacket();
-    int txRxPacket();
+    int txPacket() final;
+    int rxPacket() final;
+    int txRxPacket() final;
 };
 
 }

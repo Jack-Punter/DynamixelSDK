@@ -28,18 +28,18 @@
 namespace dynamixel
 {
 
-class WINDECLSPEC GroupFastBulkRead : public GroupBulkRead
+class WINDECLSPEC GroupFastBulkRead final : public GroupBulkRead
 {
 public:
     GroupFastBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *ph);
-    ~GroupFastBulkRead() { clearParam(); }
+    ~GroupFastBulkRead() final { clearParam(); }
 
-    int txPacket();
-    int rxPacket();
-    int txRxPacket();
+    int txPacket() final;
+    int rxPacket() final;
+    int txRxPacket() final;
 
 private:
-    void makeParam();
+    void makeParam() final;
 };
 
 }

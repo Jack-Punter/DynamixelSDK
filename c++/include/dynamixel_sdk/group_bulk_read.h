@@ -42,7 +42,7 @@ protected:
 
     bool last_result_;
 
-    void makeParam();
+    virtual void makeParam();
 
 public:
   ////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Bulk Read
   ////////////////////////////////////////////////////////////////////////////////
-  ~GroupBulkRead() { clearParam(); }
+  virtual ~GroupBulkRead() { clearParam(); }
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that adds id, start_address, data_length to the Bulk Read list
@@ -85,7 +85,7 @@ public:
   /// @return   when the list for Bulk Read is empty
   /// @return or the other communication results which come from PacketHandler::bulkReadTx
   ////////////////////////////////////////////////////////////////////////////////
-  int     txPacket();
+  virtual int     txPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives the packet which might be come from the Dynamixel
@@ -97,7 +97,7 @@ public:
   /// @return   when there is packet recieved
   /// @return or the other communication results
   ////////////////////////////////////////////////////////////////////////////////
-  int     rxPacket();
+  virtual int     rxPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits and receives the packet which might be come from the Dynamixel
@@ -107,7 +107,7 @@ public:
   /// @return   when there is packet recieved
   /// @return or the other communication results which come from GroupBulkRead::txPacket or GroupBulkRead::rxPacket
   ////////////////////////////////////////////////////////////////////////////////
-  int     txRxPacket();
+  virtual int     txRxPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that checks whether there are available data which might be received by GroupBulkRead::rxPacket or GroupBulkRead::txRxPacket

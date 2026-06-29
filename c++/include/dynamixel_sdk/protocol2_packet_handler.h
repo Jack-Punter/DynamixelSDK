@@ -53,21 +53,21 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @brief The function that returns Protocol version used in Protocol2PacketHandler (2.0)
   /// @return 2.0
   ////////////////////////////////////////////////////////////////////////////////
-  float   getProtocolVersion() { return 2.0; }
+  float   getProtocolVersion() override { return 2.0; }
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that gets description of communication result
   /// @param result Communication result which might be gotten by the tx rx functions
   /// @return description of communication result in const char* (string)
   ////////////////////////////////////////////////////////////////////////////////
-  const char *getTxRxResult     (int result);
+  const char *getTxRxResult     (int result) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that gets description of hardware error
   /// @param error Dynamixel hardware error which might be gotten by the tx rx functions
   /// @return description of hardware error in const char* (string)
   ////////////////////////////////////////////////////////////////////////////////
-  const char *getRxPacketError  (uint8_t error);
+  const char *getRxPacketError  (uint8_t error) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits the instruction packet txpacket via PortHandler port.
@@ -84,7 +84,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when written packet is shorter than expected
   /// @return or COMM_SUCCESS
   ////////////////////////////////////////////////////////////////////////////////
-  int txPacket        (PortHandlerPtr &port, uint8_t *txpacket);
+  int txPacket        (PortHandlerPtr &port, uint8_t *txpacket) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives packet (rxpacket) during designated time via PortHandler port
@@ -105,7 +105,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when rxpacket passes checksum test
   /// @return or COMM_RX_FAIL
   ////////////////////////////////////////////////////////////////////////////////
-  int rxPacket        (PortHandlerPtr &port, uint8_t *rxpacket, bool skip_stuffing = false);
+  int rxPacket        (PortHandlerPtr &port, uint8_t *rxpacket, bool skip_stuffing = false) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits packet (txpacket) and receives packet (rxpacket) during designated time via PortHandler port
@@ -121,7 +121,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when it succeeds Protocol2PacketHandler::txPacket() and Protocol2PacketHandler::rxPacket()
   /// @return or the other communication results which come from Protocol2PacketHandler::txPacket() and Protocol2PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int txRxPacket      (PortHandlerPtr &port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0);
+  int txRxPacket      (PortHandlerPtr &port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel but doesn't take its model number
@@ -132,7 +132,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::ping()
   ////////////////////////////////////////////////////////////////////////////////
-  int ping            (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0);
+  int ping            (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel and takes its model number
@@ -150,7 +150,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when it succeeds to ping Dynamixel and get model_number from it
   /// @return or the other communication results which come from Protocol2PacketHandler::txRxPacket() and Protocol2PacketHandler::readTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int ping            (PortHandlerPtr &port, uint8_t id, uint16_t *model_number, uint8_t *error = 0);
+  int ping            (PortHandlerPtr &port, uint8_t id, uint16_t *model_number, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief (Available only in Protocol 2.0) The function that pings all connected Dynamixel
@@ -158,7 +158,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param id_list ID list of Dynamixels which are found by broadcast ping
   /// @return COMM_NOT_AVAILABLE
   ////////////////////////////////////////////////////////////////////////////////
-  int broadcastPing   (PortHandlerPtr &port, std::vector<uint8_t> &id_list);
+  int broadcastPing   (PortHandlerPtr &port, std::vector<uint8_t> &id_list) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixels run as written in the Dynamixel register
@@ -169,7 +169,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param id Dynamixel ID
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int action          (PortHandlerPtr &port, uint8_t id);
+  int action          (PortHandlerPtr &port, uint8_t id) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixel reboot
@@ -183,7 +183,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int reboot          (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0);
+  int reboot          (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that reset multi-turn revolution information of Dynamixel
@@ -196,7 +196,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int clearMultiTurn  (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0);
+  int clearMultiTurn  (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that clear errors that occurred in DYNAMIXEL
@@ -208,7 +208,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error DYNAMIXEL hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int clearError      (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0);  
+  int clearError      (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) override;  
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixel reset as it was produced in the factory
@@ -237,7 +237,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when it tries to transmit to BROADCAST_ID
   /// @return or the other communication results which come from Protocol2PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int readTx          (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length);
+  int readTx          (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives the packet and reads the data in the packet
@@ -249,7 +249,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int readRx          (PortHandlerPtr &port, uint8_t id, uint16_t length, uint8_t *data, uint8_t *error = 0);
+  int readRx          (PortHandlerPtr &port, uint8_t id, uint16_t length, uint8_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_READ instruction packet, and read data from received packet
@@ -268,7 +268,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when it tries to transmit to BROADCAST_ID
   /// @return or the other communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int readTxRx        (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0);
+  int readTxRx        (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTx() function for reading 1 byte data
@@ -278,7 +278,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from Protocol2PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read1ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address);
+  int read1ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readRx() function and reads 1 byte data on the packet
@@ -289,7 +289,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read1ByteRx     (PortHandlerPtr &port, uint8_t id, uint8_t *data, uint8_t *error = 0);
+  int read1ByteRx     (PortHandlerPtr &port, uint8_t id, uint8_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTxRx() function for reading 1 byte data
@@ -303,7 +303,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int read1ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t *data, uint8_t *error = 0);
+  int read1ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTx() function for reading 2 byte data
@@ -313,7 +313,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from Protocol2PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read2ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address);
+  int read2ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readRx() function and reads 2 byte data on the packet
@@ -324,7 +324,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read2ByteRx     (PortHandlerPtr &port, uint8_t id, uint16_t *data, uint8_t *error = 0);
+  int read2ByteRx     (PortHandlerPtr &port, uint8_t id, uint16_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTxRx() function for reading 2 byte data
@@ -338,7 +338,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int read2ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t *data, uint8_t *error = 0);
+  int read2ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTx() function for reading 4 byte data
@@ -348,7 +348,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from Protocol2PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read4ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address);
+  int read4ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readRx() function and reads 4 byte data on the packet
@@ -359,7 +359,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int read4ByteRx     (PortHandlerPtr &port, uint8_t id, uint32_t *data, uint8_t *error = 0);
+  int read4ByteRx     (PortHandlerPtr &port, uint8_t id, uint32_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::readTxRx() function for reading 4 byte data
@@ -373,7 +373,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int read4ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t *data, uint8_t *error = 0);
+  int read4ByteTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_WRITE instruction packet with the data for write
@@ -386,7 +386,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param data Data for write
   /// @return communication results which come from Protocol2PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int writeTxOnly     (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data);
+  int writeTxOnly     (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_WRITE instruction packet with the data for write, and receives the packet
@@ -401,7 +401,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int writeTxRx           (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0);
+  int writeTxRx           (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxOnly() for writing 1 byte data
@@ -412,7 +412,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param data Data for write
   /// @return communication results which come from Protocol2PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  int write1ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data);
+  int write1ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxRx() for writing 1 byte data and receives the packet
@@ -425,7 +425,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int write1ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0);
+  int write1ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxOnly() for writing 2 byte data
@@ -436,7 +436,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param data Data for write
   /// @return communication results which come from Protocol2PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  int write2ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data);
+  int write2ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxRx() for writing 2 byte data and receives the packet
@@ -449,7 +449,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int write2ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data, uint8_t *error = 0);
+  int write2ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxOnly() for writing 4 byte data
@@ -460,7 +460,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param data Data for write
   /// @return communication results which come from Protocol2PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  int write4ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data);
+  int write4ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxRx() for writing 4 byte data and receives the packet
@@ -473,7 +473,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int write4ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0);
+  int write4ByteTxRx      (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register
@@ -487,7 +487,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param data Data for write
   /// @return communication results which come from Protocol2PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int regWriteTxOnly  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data);
+  int regWriteTxOnly  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register, and receives the packet
@@ -503,7 +503,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int regWriteTxRx        (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0);
+  int regWriteTxRx        (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) override;
 
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -517,7 +517,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param param_length Length of the data for Sync Read
   /// @return communication results which come from Protocol2PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int syncReadTx      (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length);
+  int syncReadTx      (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) override;
   // SyncReadRx   -> GroupSyncRead class
   // SyncReadTxRx -> GroupSyncRead class
 
@@ -532,7 +532,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param param_length Length of the data for Sync Write
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int syncWriteTxOnly (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length);
+  int syncWriteTxOnly (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) override;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_BULK_READ instruction packet
@@ -543,7 +543,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param param_length Length of the data for Bulk Read
   /// @return communication results which come from Protocol2PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int bulkReadTx      (PortHandlerPtr &port, uint8_t *param, uint16_t param_length);
+  int bulkReadTx      (PortHandlerPtr &port, uint8_t *param, uint16_t param_length) override;
   // BulkReadRx   -> GroupBulkRead class
   // BulkReadTxRx -> GroupBulkRead class
 
@@ -556,10 +556,10 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param param_length Length of the data for Bulk Write
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int bulkWriteTxOnly (PortHandlerPtr &port, uint8_t *param, uint16_t param_length);
+  int bulkWriteTxOnly (PortHandlerPtr &port, uint8_t *param, uint16_t param_length) override;
 
-  int fastSyncReadTx(PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length);
-  int fastBulkReadTx(PortHandlerPtr &port, uint8_t *param, uint16_t param_length);
+  int fastSyncReadTx(PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) override;
+  int fastBulkReadTx(PortHandlerPtr &port, uint8_t *param, uint16_t param_length) override;
 };
 
 }

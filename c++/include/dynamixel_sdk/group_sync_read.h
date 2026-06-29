@@ -43,7 +43,7 @@ protected:
     uint16_t start_address_;
     uint16_t data_length_;
 
-    void makeParam();
+    virtual void makeParam();
 
 public:
   ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Sync Read
   ////////////////////////////////////////////////////////////////////////////////
-  ~GroupSyncRead() { clearParam(); }
+  virtual ~GroupSyncRead() { clearParam(); }
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that adds id, start_address, data_length to the Sync Read list
@@ -88,7 +88,7 @@ public:
   /// @return   when the protocol1.0 has been used
   /// @return or the other communication results which come from PacketHandler::syncReadTx
   ////////////////////////////////////////////////////////////////////////////////
-  int     txPacket();
+  virtual int     txPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives the packet which might be come from the Dynamixel
@@ -99,7 +99,7 @@ public:
   /// @return   when there is packet recieved
   /// @return or the other communication results
   ////////////////////////////////////////////////////////////////////////////////
-  int     rxPacket();
+  virtual int     rxPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits and receives the packet which might be come from the Dynamixel
@@ -111,7 +111,7 @@ public:
   /// @return   when there is packet recieved
   /// @return or the other communication results which come from GroupBulkRead::txPacket or GroupBulkRead::rxPacket
   ////////////////////////////////////////////////////////////////////////////////
-  int     txRxPacket();
+  virtual int     txRxPacket();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that checks whether there are available data which might be received by GroupSyncRead::rxPacket or GroupSyncRead::txRxPacket
