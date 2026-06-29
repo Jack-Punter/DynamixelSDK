@@ -31,8 +31,8 @@
 
 using namespace dynamixel;
 
-GroupSyncRead::GroupSyncRead(PortHandler *port, PacketHandler *ph, uint16_t start_address, uint16_t data_length)
-  : GroupHandler(port, ph),
+GroupSyncRead::GroupSyncRead(std::shared_ptr<PortHandler> port, PacketHandler *ph, uint16_t start_address, uint16_t data_length)
+  : GroupHandler(std::move(port), ph),
     last_result_(false),
     start_address_(start_address),
     data_length_(data_length)

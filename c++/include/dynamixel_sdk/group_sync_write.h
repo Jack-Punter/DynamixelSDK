@@ -49,7 +49,7 @@ public:
   /// @param start_address Address of the data for write
   /// @param data_length Length of the data for write
   ////////////////////////////////////////////////////////////////////////////////
-  GroupSyncWrite(PortHandler *port, PacketHandler *ph, uint16_t start_address, uint16_t data_length);
+  GroupSyncWrite(std::shared_ptr<PortHandler> port, PacketHandler *ph, uint16_t start_address, uint16_t data_length);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Sync Write

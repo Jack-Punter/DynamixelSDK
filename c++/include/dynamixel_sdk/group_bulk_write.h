@@ -49,7 +49,7 @@ public:
   /// @param port PortHandler instance
   /// @param ph PacketHandler instance
   ////////////////////////////////////////////////////////////////////////////////
-  GroupBulkWrite(PortHandler *port, PacketHandler *ph);
+  GroupBulkWrite(std::shared_ptr<PortHandler> port, PacketHandler *ph);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Bulk Write

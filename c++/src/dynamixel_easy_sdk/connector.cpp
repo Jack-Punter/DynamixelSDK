@@ -22,7 +22,7 @@ namespace dynamixel
 {
 Connector::Connector(const std::string & port_name, int baud_rate)
 {
-  port_handler_ = std::unique_ptr<PortHandler>(PortHandler::getPortHandler(port_name.c_str()));
+  port_handler_ = PortHandler::getPortHandler(port_name.c_str());
   packet_handler_ = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
   if (!port_handler_->openPort()) {
@@ -76,7 +76,7 @@ Result<uint8_t, DxlError> Connector::read1ByteData(uint8_t id, uint16_t address)
   uint8_t dxl_error = 0;
   uint8_t data = 0;
   int dxl_comm_result = packet_handler_->read1ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address,
     &data,
     &dxl_error);
@@ -94,7 +94,7 @@ Result<uint16_t, DxlError> Connector::read2ByteData(uint8_t id, uint16_t address
   uint8_t dxl_error = 0;
   uint16_t data = 0;
   int dxl_comm_result = packet_handler_->read2ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address,
     &data,
     &dxl_error);
@@ -112,7 +112,7 @@ Result<uint32_t, DxlError> Connector::read4ByteData(uint8_t id, uint16_t address
   uint8_t dxl_error = 0;
   uint32_t data = 0;
   int dxl_comm_result = packet_handler_->read4ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address,
     &data,
     &dxl_error);
@@ -129,7 +129,7 @@ Result<void, DxlError> Connector::write1ByteData(uint8_t id, uint16_t address, u
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = packet_handler_->write1ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address, value,
     &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
@@ -145,7 +145,7 @@ Result<void, DxlError> Connector::write2ByteData(uint8_t id, uint16_t address, u
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = packet_handler_->write2ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address,
     value,
     &dxl_error);
@@ -162,7 +162,7 @@ Result<void, DxlError> Connector::write4ByteData(uint8_t id, uint16_t address, u
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = packet_handler_->write4ByteTxRx(
-    port_handler_.get(),
+    port_handler_,
     id, address,
     value,
     &dxl_error);
@@ -178,7 +178,7 @@ Result<void, DxlError> Connector::write4ByteData(uint8_t id, uint16_t address, u
 Result<void, DxlError> Connector::reboot(uint8_t id)
 {
   uint8_t dxl_error = 0;
-  int dxl_comm_result = packet_handler_->reboot(port_handler_.get(), id, &dxl_error);
+  int dxl_comm_result = packet_handler_->reboot(port_handler_, id, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     return static_cast<DxlError>(dxl_comm_result);
   }
@@ -192,7 +192,7 @@ Result<uint16_t, DxlError> Connector::ping(uint8_t id)
 {
   uint8_t dxl_error = 0;
   uint16_t data = 0;
-  int dxl_comm_result = packet_handler_->ping(port_handler_.get(), id, &data, &dxl_error);
+  int dxl_comm_result = packet_handler_->ping(port_handler_, id, &data, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     return static_cast<DxlError>(dxl_comm_result);
   }
@@ -205,7 +205,7 @@ Result<uint16_t, DxlError> Connector::ping(uint8_t id)
 Result <std::vector<uint8_t>, DxlError> Connector::broadcastPing()
 {
   std::vector<uint8_t> ids;
-  int dxl_comm_result = packet_handler_->broadcastPing(port_handler_.get(), ids);
+  int dxl_comm_result = packet_handler_->broadcastPing(port_handler_, ids);
   if (dxl_comm_result != COMM_SUCCESS) {
     return static_cast<DxlError>(dxl_comm_result);
   }
@@ -215,7 +215,7 @@ Result <std::vector<uint8_t>, DxlError> Connector::broadcastPing()
 Result<void, DxlError> Connector::factoryReset(uint8_t id, uint8_t option)
 {
   uint8_t dxl_error = 0;
-  int dxl_comm_result = packet_handler_->factoryReset(port_handler_.get(), id, option, &dxl_error);
+  int dxl_comm_result = packet_handler_->factoryReset(port_handler_, id, option, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     return static_cast<DxlError>(dxl_comm_result);
   }

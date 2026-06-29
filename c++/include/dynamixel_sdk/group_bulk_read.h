@@ -50,7 +50,7 @@ public:
   /// @param port PortHandler instance
   /// @param ph PacketHandler instance
   ////////////////////////////////////////////////////////////////////////////////
-  GroupBulkRead(PortHandler *port, PacketHandler *ph);
+  GroupBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *ph);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Bulk Read

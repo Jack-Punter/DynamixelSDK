@@ -59,7 +59,7 @@ private:
   Result<void, DxlError> processStatusRequests(StagedCommand & cmd, int data = -1);
 
   Connector * connector_;
-  PortHandler * port_handler_;
+  std::shared_ptr<PortHandler> port_handler_;
   PacketHandler * packet_handler_;
 
   GroupBulkWrite group_bulk_write_;

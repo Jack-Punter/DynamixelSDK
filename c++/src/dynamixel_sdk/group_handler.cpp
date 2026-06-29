@@ -29,8 +29,8 @@
 
 using namespace dynamixel;
 
-GroupHandler::GroupHandler(PortHandler *port, PacketHandler *ph)
- : port_(port),
+GroupHandler::GroupHandler(std::shared_ptr<PortHandler> port, PacketHandler *ph)
+ : port_(std::move(port)),
    ph_(ph),
    is_param_changed_(false),
    param_(0)

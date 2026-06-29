@@ -52,11 +52,11 @@ public:
   Result<void, DxlError> factoryReset(uint8_t id, uint8_t option);
   void closePort() {port_handler_->closePort();}
 
-  PortHandler * getPortHandler() const {return port_handler_.get();}
+  std::shared_ptr<PortHandler> getPortHandler() const {return port_handler_; }
   PacketHandler * getPacketHandler() const {return packet_handler_;}
 
 private:
-  std::unique_ptr<PortHandler> port_handler_;
+  std::shared_ptr<PortHandler> port_handler_;
   PacketHandler * packet_handler_;
 };
 }  // namespace dynamixel

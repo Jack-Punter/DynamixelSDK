@@ -35,8 +35,8 @@ const int PKT_PARAMETER0 = 8;
 
 using namespace dynamixel;
 
-GroupFastSyncRead::GroupFastSyncRead(PortHandler *port, PacketHandler *ph, uint16_t start_address, uint16_t data_length)
-  : GroupSyncRead(port, ph, start_address, data_length)
+GroupFastSyncRead::GroupFastSyncRead(std::shared_ptr<PortHandler> port, PacketHandler *ph, uint16_t start_address, uint16_t data_length)
+  : GroupSyncRead(std::move(port), ph, start_address, data_length)
 {
     clearParam();
 }

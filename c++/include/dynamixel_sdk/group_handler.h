@@ -34,13 +34,13 @@ namespace dynamixel
 class WINDECLSPEC GroupHandler
 {
 public:
-    GroupHandler(PortHandler *port, PacketHandler *ph);
+    GroupHandler(std::shared_ptr<PortHandler> port, PacketHandler *ph);
 
-    PortHandler *getPortHandler() { return port_; }
+    std::shared_ptr<PortHandler> & getPortHandler() { return port_; }
     PacketHandler *getPacketHandler() { return ph_; }
 
 protected:
-    PortHandler *port_;
+    std::shared_ptr<PortHandler> port_;
     PacketHandler *ph_;
 
     std::vector<uint8_t> id_list_;

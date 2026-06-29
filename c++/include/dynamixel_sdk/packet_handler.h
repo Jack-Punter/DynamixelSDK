@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <span>
 #include "port_handler.h"
 
 #define BROADCAST_ID        0xFE    // 254
@@ -86,7 +87,7 @@ class WINDECLSPEC PacketHandler
 {
  protected:
   PacketHandler() { }
-
+  using PortHandlerPtr = std::shared_ptr<PortHandler>; ///< PortHandler shared pointer type
  public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that returns PacketHandler instance
@@ -131,7 +132,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when written packet is shorter than expected
   /// @return or COMM_SUCCESS
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int txPacket        (PortHandler *port, uint8_t *txpacket) = 0;
+  virtual int txPacket        (PortHandlerPtr &port, uint8_t *txpacket) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives packet (rxpacket) during designated time via PortHandler port
@@ -152,7 +153,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when rxpacket passes checksum test
   /// @return or COMM_RX_FAIL
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int rxPacket        (PortHandler *port, uint8_t *rxpacket, bool skip_stuffing = false) = 0;
+  virtual int rxPacket        (PortHandlerPtr &port, uint8_t *rxpacket, bool skip_stuffing = false) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits packet (txpacket) and receives packet (rxpacket) during designated time via PortHandler port
@@ -168,7 +169,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when it succeeds PacketHandler::txPacket() and PacketHandler::rxPacket()
   /// @return or the other communication results which come from PacketHandler::txPacket() and PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int txRxPacket      (PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0) = 0;
+  virtual int txRxPacket      (PortHandlerPtr &port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel but doesn't take its model number
@@ -179,7 +180,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::ping()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int ping            (PortHandler *port, uint8_t id, uint8_t *error = 0) = 0;
+  virtual int ping            (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel and takes its model number
@@ -197,7 +198,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when it succeeds to ping Dynamixel and get model_number from it
   /// @return or the other communication results which come from PacketHandler::txRxPacket() and PacketHandler::readTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int ping            (PortHandler *port, uint8_t id, uint16_t *model_number, uint8_t *error = 0) = 0;
+  virtual int ping            (PortHandlerPtr &port, uint8_t id, uint16_t *model_number, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief (Available only in Protocol 2.0) The function that pings all connected Dynamixel
@@ -205,7 +206,7 @@ class WINDECLSPEC PacketHandler
   /// @param id_list ID list of Dynamixels which are found by broadcast ping
   /// @return COMM_NOT_AVAILABLE
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int broadcastPing   (PortHandler *port, std::vector<uint8_t> &id_list) = 0;
+  virtual int broadcastPing   (PortHandlerPtr &port, std::vector<uint8_t> &id_list) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixels run as written in the Dynamixel register
@@ -216,7 +217,7 @@ class WINDECLSPEC PacketHandler
   /// @param id Dynamixel ID
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int action          (PortHandler *port, uint8_t id) = 0;
+  virtual int action          (PortHandlerPtr &port, uint8_t id) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixel reboot
@@ -230,7 +231,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int reboot          (PortHandler *port, uint8_t id, uint8_t *error = 0) = 0;
+  virtual int reboot          (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that reset multi-turn revolution information of Dynamixel
@@ -244,7 +245,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int clearMultiTurn  (PortHandler *port, uint8_t id, uint8_t *error = 0) = 0;
+  virtual int clearMultiTurn  (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that clear errors that occurred in DYNAMIXEL
@@ -256,7 +257,7 @@ class WINDECLSPEC PacketHandler
   /// @param error DYNAMIXEL hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int clearError      (PortHandler *port, uint8_t id, uint8_t *error = 0) = 0;
+  virtual int clearError      (PortHandlerPtr &port, uint8_t id, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that makes Dynamixel reset as it was produced in the factory
@@ -269,7 +270,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int factoryReset    (PortHandler *port, uint8_t id, uint8_t option = 0, uint8_t *error = 0) = 0;
+  virtual int factoryReset    (PortHandlerPtr &port, uint8_t id, uint8_t option = 0, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_READ instruction packet
@@ -285,7 +286,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when it tries to transmit to BROADCAST_ID
   /// @return or the other communication results which come from PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int readTx          (PortHandler *port, uint8_t id, uint16_t address, uint16_t length) = 0;
+  virtual int readTx          (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that receives the packet and reads the data in the packet
@@ -297,7 +298,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int readRx          (PortHandler *port, uint8_t id, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int readRx          (PortHandlerPtr &port, uint8_t id, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_READ instruction packet, and read data from received packet
@@ -316,7 +317,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when it tries to transmit to BROADCAST_ID
   /// @return or the other communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int readTxRx        (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int readTxRx        (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTx() function for reading 1 byte data
@@ -326,7 +327,7 @@ class WINDECLSPEC PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read1ByteTx     (PortHandler *port, uint8_t id, uint16_t address) = 0;
+  virtual int read1ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readRx() function and reads 1 byte data on the packet
@@ -337,7 +338,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read1ByteRx     (PortHandler *port, uint8_t id, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int read1ByteRx     (PortHandlerPtr &port, uint8_t id, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTxRx() function for reading 1 byte data
@@ -351,7 +352,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read1ByteTxRx   (PortHandler *port, uint8_t id, uint16_t address, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int read1ByteTxRx   (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTx() function for reading 2 byte data
@@ -361,7 +362,7 @@ class WINDECLSPEC PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read2ByteTx     (PortHandler *port, uint8_t id, uint16_t address) = 0;
+  virtual int read2ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readRx() function and reads 2 byte data on the packet
@@ -372,7 +373,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read2ByteRx     (PortHandler *port, uint8_t id, uint16_t *data, uint8_t *error = 0) = 0;
+  virtual int read2ByteRx     (PortHandlerPtr &port, uint8_t id, uint16_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTxRx() function for reading 2 byte data
@@ -386,7 +387,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read2ByteTxRx   (PortHandler *port, uint8_t id, uint16_t address, uint16_t *data, uint8_t *error = 0) = 0;
+  virtual int read2ByteTxRx   (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTx() function for reading 4 byte data
@@ -396,7 +397,7 @@ class WINDECLSPEC PacketHandler
   /// @param address Address of the data for read
   /// @return communication results which come from PacketHandler::readTx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read4ByteTx     (PortHandler *port, uint8_t id, uint16_t address) = 0;
+  virtual int read4ByteTx     (PortHandlerPtr &port, uint8_t id, uint16_t address) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readRx() function and reads 4 byte data on the packet
@@ -407,7 +408,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::readRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read4ByteRx     (PortHandler *port, uint8_t id, uint32_t *data, uint8_t *error = 0) = 0;
+  virtual int read4ByteRx     (PortHandlerPtr &port, uint8_t id, uint32_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::readTxRx() function for reading 4 byte data
@@ -421,7 +422,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int read4ByteTxRx   (PortHandler *port, uint8_t id, uint16_t address, uint32_t *data, uint8_t *error = 0) = 0;
+  virtual int read4ByteTxRx   (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_WRITE instruction packet with the data for write
@@ -434,7 +435,7 @@ class WINDECLSPEC PacketHandler
   /// @param data Data for write
   /// @return communication results which come from PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int writeTxOnly     (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) = 0;
+  virtual int writeTxOnly     (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_WRITE instruction packet with the data for write, and receives the packet
@@ -449,7 +450,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int writeTxRx       (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int writeTxRx       (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxOnly() for writing 1 byte data
@@ -460,7 +461,7 @@ class WINDECLSPEC PacketHandler
   /// @param data Data for write
   /// @return communication results which come from PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write1ByteTxOnly(PortHandler *port, uint8_t id, uint16_t address, uint8_t data) = 0;
+  virtual int write1ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxRx() for writing 1 byte data and receives the packet
@@ -473,7 +474,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write1ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0) = 0;
+  virtual int write1ByteTxRx  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxOnly() for writing 2 byte data
@@ -484,7 +485,7 @@ class WINDECLSPEC PacketHandler
   /// @param data Data for write
   /// @return communication results which come from PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write2ByteTxOnly(PortHandler *port, uint8_t id, uint16_t address, uint16_t data) = 0;
+  virtual int write2ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxRx() for writing 2 byte data and receives the packet
@@ -497,7 +498,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write2ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint16_t data, uint8_t *error = 0) = 0;
+  virtual int write2ByteTxRx  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxOnly() for writing 4 byte data
@@ -508,7 +509,7 @@ class WINDECLSPEC PacketHandler
   /// @param data Data for write
   /// @return communication results which come from PacketHandler::writeTxOnly()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write4ByteTxOnly(PortHandler *port, uint8_t id, uint16_t address, uint32_t data) = 0;
+  virtual int write4ByteTxOnly(PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxRx() for writing 4 byte data and receives the packet
@@ -521,7 +522,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write4ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0) = 0;
+  virtual int write4ByteTxRx  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register
@@ -535,7 +536,7 @@ class WINDECLSPEC PacketHandler
   /// @param data Data for write
   /// @return communication results which come from PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int regWriteTxOnly  (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) = 0;
+  virtual int regWriteTxOnly  (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register, and receives the packet
@@ -551,7 +552,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int regWriteTxRx    (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int regWriteTxRx    (PortHandlerPtr &port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_SYNC_READ instruction packet
@@ -564,7 +565,7 @@ class WINDECLSPEC PacketHandler
   /// @param param_length Length of the data for Sync Read
   /// @return communication results which come from PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int syncReadTx      (PortHandler *port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
+  virtual int syncReadTx      (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
   // SyncReadRx   -> GroupSyncRead class
   // SyncReadTxRx -> GroupSyncRead class
 
@@ -579,7 +580,7 @@ class WINDECLSPEC PacketHandler
   /// @param param_length Length of the data for Sync Write
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int syncWriteTxOnly (PortHandler *port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
+  virtual int syncWriteTxOnly (PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_BULK_READ instruction packet
@@ -590,7 +591,7 @@ class WINDECLSPEC PacketHandler
   /// @param param_length Length of the data for Bulk Read
   /// @return communication results which come from PacketHandler::txPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int bulkReadTx      (PortHandler *port, uint8_t *param, uint16_t param_length) = 0;
+  virtual int bulkReadTx      (PortHandlerPtr &port, uint8_t *param, uint16_t param_length) = 0;
   // BulkReadRx   -> GroupBulkRead class
   // BulkReadTxRx -> GroupBulkRead class
 
@@ -603,10 +604,10 @@ class WINDECLSPEC PacketHandler
   /// @param param_length Length of the data for Bulk Write
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int bulkWriteTxOnly (PortHandler *port, uint8_t *param, uint16_t param_length) = 0;
+  virtual int bulkWriteTxOnly (PortHandlerPtr &port, uint8_t *param, uint16_t param_length) = 0;
 
-  virtual int fastSyncReadTx(PortHandler *port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
-  virtual int fastBulkReadTx(PortHandler *port, uint8_t *param, uint16_t param_length) = 0;
+  virtual int fastSyncReadTx(PortHandlerPtr &port, uint16_t start_address, uint16_t data_length, uint8_t *param, uint16_t param_length) = 0;
+  virtual int fastBulkReadTx(PortHandlerPtr &port, uint8_t *param, uint16_t param_length) = 0;
 };
 
 }

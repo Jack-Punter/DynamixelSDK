@@ -31,8 +31,8 @@
 
 using namespace dynamixel;
 
-GroupBulkWrite::GroupBulkWrite(PortHandler *port, PacketHandler *ph)
-  : GroupHandler(port, ph),
+GroupBulkWrite::GroupBulkWrite(std::shared_ptr<PortHandler> port, PacketHandler *ph)
+  : GroupHandler(std::move(port), ph),
     param_length_(0)
 {
   clearParam();

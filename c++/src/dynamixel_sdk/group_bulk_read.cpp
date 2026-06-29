@@ -32,8 +32,8 @@
 
 using namespace dynamixel;
 
-GroupBulkRead::GroupBulkRead(PortHandler *port, PacketHandler *ph)
-  : GroupHandler(port, ph),
+GroupBulkRead::GroupBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *ph)
+  : GroupHandler(std::move(port), ph),
     last_result_(false)
 {
   clearParam();
