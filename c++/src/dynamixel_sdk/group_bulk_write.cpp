@@ -46,24 +46,24 @@ void GroupBulkWrite::makeParam()
   param_ = nullptr;
 
   param_length_ = 0;
-  for (unsigned int i = 0; i < id_list_.size(); i++)
-    param_length_ += 1 + 2 + 2 + length_list_[id_list_[i]];
+  for (uint8_t id : id_list_)
+    param_length_ += 1 + 2 + 2 + write_param_list_[id].data_length; // ID(1) + ADDR(2) + LENGTH(2) + DATA(data_length)
 
   param_ = new uint8_t[param_length_];
 
   int idx = 0;
-  for (unsigned int i = 0; i < id_list_.size(); i++)
+  for (uint8_t id : id_list_)
   {
-    uint8_t id = id_list_[i];
     if (data_list_[id] == 0)
       return;
 
+    auto [address, length] = write_param_list_[id];
     param_[idx++] = id;
-    param_[idx++] = DXL_LOBYTE(address_list_[id]);
-    param_[idx++] = DXL_HIBYTE(address_list_[id]);
-    param_[idx++] = DXL_LOBYTE(length_list_[id]);
-    param_[idx++] = DXL_HIBYTE(length_list_[id]);
-    for (int c = 0; c < length_list_[id]; c++)
+    param_[idx++] = DXL_LOBYTE(address);
+    param_[idx++] = DXL_HIBYTE(address);
+    param_[idx++] = DXL_LOBYTE(length);
+    param_[idx++] = DXL_HIBYTE(length);
+    for (int c = 0; c < length; c++)
       param_[idx++] = (data_list_[id])[c];
   }
 }
@@ -77,8 +77,7 @@ bool GroupBulkWrite::addParam(uint8_t id, uint16_t start_address, uint16_t data_
     return false;
 
   id_list_.push_back(id);
-  address_list_[id]   = start_address;
-  length_list_[id]    = data_length;
+  write_param_list_[id] = {start_address, data_length};
   data_list_[id]      = new uint8_t[data_length];
   for (int c = 0; c < data_length; c++)
     data_list_[id][c] = data[c];
@@ -96,8 +95,7 @@ void GroupBulkWrite::removeParam(uint8_t id)
     return;
 
   id_list_.erase(it);
-  address_list_.erase(id);
-  length_list_.erase(id);
+  write_param_list_.erase(id);
   delete[] data_list_[id];
   data_list_.erase(id);
 
@@ -112,8 +110,7 @@ bool GroupBulkWrite::changeParam(uint8_t id, uint16_t start_address, uint16_t da
   if (it == id_list_.end())    // NOT exist
     return false;
 
-  address_list_[id]   = start_address;
-  length_list_[id]    = data_length;
+  write_param_list_[id] = {start_address, data_length};
   delete[] data_list_[id];
   data_list_[id]      = new uint8_t[data_length];
   for (int c = 0; c < data_length; c++)

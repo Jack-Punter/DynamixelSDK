@@ -36,8 +36,11 @@ namespace dynamixel
 class WINDECLSPEC GroupBulkWrite : public GroupHandler
 {
 private:
-  std::map<uint8_t, uint16_t> address_list_;  // <id, start_address>
-  std::map<uint8_t, uint16_t> length_list_;   // <id, data_length>
+  struct WriteParams {
+    uint16_t start_address;
+    uint16_t data_length;
+  };
+  std::map<uint8_t, WriteParams> write_param_list_;  // <id, WriteParams>
 
   uint16_t param_length_;
 
