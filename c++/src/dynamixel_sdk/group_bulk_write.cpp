@@ -35,7 +35,6 @@ GroupBulkWrite::GroupBulkWrite(std::shared_ptr<PortHandler> port, PacketHandler 
   : GroupHandler(std::move(port), ph),
     param_length_(0)
 {
-  clearParam();
 }
 
 void GroupBulkWrite::makeParam()
@@ -43,9 +42,8 @@ void GroupBulkWrite::makeParam()
   if (ph_->getProtocolVersion() == 1.0 || id_list_.size() == 0)
     return;
 
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
+  delete[] param_;
+  param_ = nullptr;
 
   param_length_ = 0;
   for (unsigned int i = 0; i < id_list_.size(); i++)
@@ -124,22 +122,7 @@ bool GroupBulkWrite::changeParam(uint8_t id, uint16_t start_address, uint16_t da
   is_param_changed_   = true;
   return true;
 }
-void GroupBulkWrite::clearParam()
-{
-  if (ph_->getProtocolVersion() == 1.0 || id_list_.size() == 0)
-    return;
 
-  for (unsigned int i = 0; i < id_list_.size(); i++)
-    delete[] data_list_[id_list_[i]];
-
-  id_list_.clear();
-  address_list_.clear();
-  length_list_.clear();
-  data_list_.clear();
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
-}
 int GroupBulkWrite::txPacket()
 {
   if (ph_->getProtocolVersion() == 1.0 || id_list_.size() == 0)

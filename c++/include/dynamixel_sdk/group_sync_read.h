@@ -36,7 +36,7 @@ namespace dynamixel
 class WINDECLSPEC GroupSyncRead : public GroupHandler
 {
 protected:
-    std::map<uint8_t, uint8_t *> error_list_; // <id, error>
+    std::map<uint8_t, uint8_t> error_list_; // <id, error>
 
     bool last_result_;
 
@@ -58,7 +58,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Sync Read
   ////////////////////////////////////////////////////////////////////////////////
-  virtual ~GroupSyncRead() { clearParam(); }
+  virtual ~GroupSyncRead() = default;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that adds id, start_address, data_length to the Sync Read list

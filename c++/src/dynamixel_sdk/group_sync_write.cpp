@@ -36,16 +36,14 @@ GroupSyncWrite::GroupSyncWrite(std::shared_ptr<PortHandler> port, PacketHandler 
     start_address_(start_address),
     data_length_(data_length)
 {
-  clearParam();
 }
 
 void GroupSyncWrite::makeParam()
 {
   if (id_list_.size() == 0) return;
 
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
+  delete[] param_;
+  param_ = nullptr;
 
   param_ = new uint8_t[id_list_.size() * (1 + data_length_)]; // ID(1) + DATA(data_length)
 
@@ -102,21 +100,6 @@ bool GroupSyncWrite::changeParam(uint8_t id, uint8_t *data)
 
   is_param_changed_   = true;
   return true;
-}
-
-void GroupSyncWrite::clearParam()
-{
-  if (id_list_.size() == 0)
-    return;
-
-  for (unsigned int i = 0; i < id_list_.size(); i++)
-    delete[] data_list_[id_list_[i]];
-
-  id_list_.clear();
-  data_list_.clear();
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
 }
 
 int GroupSyncWrite::txPacket()

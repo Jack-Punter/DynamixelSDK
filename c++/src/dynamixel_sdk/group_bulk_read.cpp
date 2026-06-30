@@ -36,17 +36,16 @@ GroupBulkRead::GroupBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *p
   : GroupHandler(std::move(port), ph),
     last_result_(false)
 {
-  clearParam();
-}
+
+} 
 
 void GroupBulkRead::makeParam()
 {
   if (id_list_.size() == 0)
     return;
 
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
+  delete[] param_;
+  param_ = nullptr;
 
   if (ph_->getProtocolVersion() == 1.0)
   {
@@ -61,19 +60,20 @@ void GroupBulkRead::makeParam()
   for (unsigned int i = 0; i < id_list_.size(); i++)
   {
     uint8_t id = id_list_[i];
+    auto [address, length] = read_param_list_[id];
     if (ph_->getProtocolVersion() == 1.0)
     {
-      param_[idx++] = (uint8_t)length_list_[id];    // LEN
+      param_[idx++] = static_cast<uint8_t>(length);    // LEN
       param_[idx++] = id;                           // ID
-      param_[idx++] = (uint8_t)address_list_[id];   // ADDR
+      param_[idx++] = static_cast<uint8_t>(address);   // ADDR
     }
     else    // 2.0
     {
       param_[idx++] = id;                               // ID
-      param_[idx++] = DXL_LOBYTE(address_list_[id]);    // ADDR_L
-      param_[idx++] = DXL_HIBYTE(address_list_[id]);    // ADDR_H
-      param_[idx++] = DXL_LOBYTE(length_list_[id]);     // LEN_L
-      param_[idx++] = DXL_HIBYTE(length_list_[id]);     // LEN_H
+      param_[idx++] = DXL_LOBYTE(address);    // ADDR_L
+      param_[idx++] = DXL_HIBYTE(address);    // ADDR_H
+      param_[idx++] = DXL_LOBYTE(length);     // LEN_L
+      param_[idx++] = DXL_HIBYTE(length);     // LEN_H
     }
   }
 }
@@ -84,10 +84,11 @@ bool GroupBulkRead::addParam(uint8_t id, uint16_t start_address, uint16_t data_l
     return false;
 
   id_list_.push_back(id);
-  length_list_[id]    = data_length;
-  address_list_[id]   = start_address;
-  data_list_[id]      = new uint8_t[data_length];
-  error_list_[id]     = new uint8_t[1];
+  read_param_list_[id] = {.start_address=start_address, .data_length=data_length};
+  // TODO(jack): Better solution here... see: feature-cpp-raii?
+  // Personally i'd rather avoid allocatiosn to keep memory fragmentaiton low, especially for "fast" versions
+  data_list_[id]      = new uint8_t[data_length]; 
+  error_list_[id]     = {};
 
   is_param_changed_   = true;
   return true;
@@ -100,35 +101,12 @@ void GroupBulkRead::removeParam(uint8_t id)
     return;
 
   id_list_.erase(it);
-  address_list_.erase(id);
-  length_list_.erase(id);
+  read_param_list_.erase(id);
   delete[] data_list_[id];
-  delete[] error_list_[id];
   data_list_.erase(id);
   error_list_.erase(id);
 
   is_param_changed_   = true;
-}
-
-void GroupBulkRead::clearParam()
-{
-  if (id_list_.size() == 0)
-    return;
-
-  for (unsigned int i = 0; i < id_list_.size(); i++)
-  {
-    delete[] data_list_[id_list_[i]];
-    delete[] error_list_[id_list_[i]];
-  }
-
-  id_list_.clear();
-  address_list_.clear();
-  length_list_.clear();
-  data_list_.clear();
-  error_list_.clear();
-  if (param_ != 0)
-    delete[] param_;
-  param_ = 0;
 }
 
 int GroupBulkRead::txPacket()
@@ -136,7 +114,7 @@ int GroupBulkRead::txPacket()
   if (id_list_.size() == 0)
     return COMM_NOT_AVAILABLE;
 
-  if (is_param_changed_ == true || param_ == 0)
+  if (is_param_changed_ == true || param_ == nullptr)
     makeParam();
 
   if (ph_->getProtocolVersion() == 1.0)
@@ -162,8 +140,8 @@ int GroupBulkRead::rxPacket()
   for (int i = 0; i < cnt; i++)
   {
     uint8_t id = id_list_[i];
-
-    result = ph_->readRx(port_, id, length_list_[id], data_list_[id], error_list_[id]);
+    uint16_t length = read_param_list_[id].data_length;
+    result = ph_->readRx(port_, id, length, data_list_[id], &error_list_[id]);
     if (result != COMM_SUCCESS)
       return result;
   }
@@ -187,14 +165,12 @@ int GroupBulkRead::txRxPacket()
 
 bool GroupBulkRead::isAvailable(uint8_t id, uint16_t address, uint16_t data_length)
 {
-  uint16_t start_addr;
-
   if (last_result_ == false || data_list_.find(id) == data_list_.end())
     return false;
 
-  start_addr = address_list_[id];
+  auto [start_addr, length] = read_param_list_[id];
 
-  if (address < start_addr || start_addr + length_list_[id] - data_length < address)
+  if (address < start_addr || start_addr + length - data_length < address)
     return false;
 
   return true;
@@ -205,19 +181,19 @@ uint32_t GroupBulkRead::getData(uint8_t id, uint16_t address, uint16_t data_leng
   if (isAvailable(id, address, data_length) == false)
     return 0;
 
-  uint16_t start_addr = address_list_[id];
-
+  uint16_t start_addr = read_param_list_[id].start_address;
+  uint8_t *data = data_list_[id];
   switch(data_length)
   {
     case 1:
-      return data_list_[id][address - start_addr];
+      return data[address - start_addr];
 
     case 2:
-      return DXL_MAKEWORD(data_list_[id][address - start_addr], data_list_[id][address - start_addr + 1]);
+      return DXL_MAKEWORD(data[address - start_addr], data[address - start_addr + 1]);
 
     case 4:
-      return DXL_MAKEDWORD(DXL_MAKEWORD(data_list_[id][address - start_addr + 0], data_list_[id][address - start_addr + 1]),
-                           DXL_MAKEWORD(data_list_[id][address - start_addr + 2], data_list_[id][address - start_addr + 3]));
+      return DXL_MAKEDWORD(DXL_MAKEWORD(data[address - start_addr + 0], data[address - start_addr + 1]),
+                           DXL_MAKEWORD(data[address - start_addr + 2], data[address - start_addr + 3]));
 
     default:
       return 0;
@@ -229,6 +205,6 @@ bool GroupBulkRead::getError(uint8_t id, uint8_t* error)
   if (ph_->getProtocolVersion() == 1.0 || !last_result_ || error_list_.find(id) == error_list_.end())
     return false;
 
-  error[0] = error_list_[id][0];
+  *error = error_list_[id];
   return true;
 }

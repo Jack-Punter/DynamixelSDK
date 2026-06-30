@@ -38,7 +38,6 @@ using namespace dynamixel;
 GroupFastSyncRead::GroupFastSyncRead(std::shared_ptr<PortHandler> port, PacketHandler *ph, uint16_t start_address, uint16_t data_length)
   : GroupSyncRead(std::move(port), ph, start_address, data_length)
 {
-    clearParam();
 }
 
 int GroupFastSyncRead::txPacket()
@@ -73,7 +72,7 @@ int GroupFastSyncRead::rxPacket()
         int index = PKT_PARAMETER0;
         for (int i = 0; i < count; ++i) {
             uint8_t id = id_list_[i];
-            *error_list_[id] = (uint8_t)rxpacket[index];
+            error_list_[id] = (uint8_t)rxpacket[index];
             for (uint16_t s = 0; s < data_length_; s++) {
                 data_list_[id][s] = rxpacket[index + 2 + s];
             }

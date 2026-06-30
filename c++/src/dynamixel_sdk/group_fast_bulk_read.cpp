@@ -38,7 +38,6 @@ using namespace dynamixel;
 GroupFastBulkRead::GroupFastBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *ph)
   : GroupBulkRead(std::move(port), ph)
 {
-    clearParam();
 }
 
 void GroupFastBulkRead::makeParam()
@@ -46,20 +45,20 @@ void GroupFastBulkRead::makeParam()
     if ((1.0 == ph_->getProtocolVersion()) || (id_list_.empty()))
         return;
 
-    if (0 != param_)
-        delete[] param_;
-    param_ = 0;
+    delete[] param_;
+    param_ = nullptr;
 
     param_ = new uint8_t[id_list_.size() * 5];  // ID(1) + ADDR(2) + LENGTH(2)
 
     int idx = 0;
     for (unsigned int i = 0; i < id_list_.size(); i++) {
         uint8_t id = id_list_[i];
+        auto [address, length] = read_param_list_[id];
         param_[idx++] = id;                               // ID
-        param_[idx++] = DXL_LOBYTE(address_list_[id]);    // ADDR_L
-        param_[idx++] = DXL_HIBYTE(address_list_[id]);    // ADDR_H
-        param_[idx++] = DXL_LOBYTE(length_list_[id]);     // LEN_L
-        param_[idx++] = DXL_HIBYTE(length_list_[id]);     // LEN_H
+        param_[idx++] = DXL_LOBYTE(address);    // ADDR_L
+        param_[idx++] = DXL_HIBYTE(address);    // ADDR_H
+        param_[idx++] = DXL_LOBYTE(length);     // LEN_L
+        param_[idx++] = DXL_HIBYTE(length);     // LEN_H
     }
 }
 
@@ -95,8 +94,8 @@ int GroupFastBulkRead::rxPacket()
         int index = PKT_PARAMETER0;
         for (int i = 0; i < count; ++i) {
             uint8_t id = id_list_[i];
-            uint16_t length = length_list_[id];
-            *error_list_[id] = (uint8_t)rxpacket[index];
+            uint16_t length = read_param_list_[id].data_length;
+            error_list_[id] = (uint8_t)rxpacket[index];
             for (uint16_t s = 0; s < length; s++) {
                 data_list_[id][s] = rxpacket[index + 2 + s];
             }

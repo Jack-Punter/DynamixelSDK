@@ -37,3 +37,11 @@ GroupHandler::GroupHandler(std::shared_ptr<PortHandler> port, PacketHandler *ph)
 {
 
 }
+
+GroupHandler::~GroupHandler()
+{
+  for (uint8_t id : id_list_) {
+    delete[] data_list_[id];
+  }
+  delete[] param_;
+}

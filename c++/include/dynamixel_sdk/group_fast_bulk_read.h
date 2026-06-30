@@ -32,7 +32,7 @@ class WINDECLSPEC GroupFastBulkRead final : public GroupBulkRead
 {
 public:
     GroupFastBulkRead(std::shared_ptr<PortHandler> port, PacketHandler *ph);
-    ~GroupFastBulkRead() final { clearParam(); }
+    ~GroupFastBulkRead() final = default; 
 
     int txPacket() final;
     int rxPacket() final;

@@ -36,9 +36,12 @@ namespace dynamixel
 class WINDECLSPEC GroupBulkRead : public GroupHandler
 {
 protected:
-    std::map<uint8_t, uint16_t> address_list_;  // <id, start_address>
-    std::map<uint8_t, uint16_t> length_list_;   // <id, data_length>
-    std::map<uint8_t, uint8_t *> error_list_;   // <id, error>
+    struct ReadParams {
+        uint16_t start_address;
+        uint16_t data_length;
+    };
+    std::map<uint8_t, ReadParams> read_param_list_;  // <id, ReadParams>
+    std::map<uint8_t, uint8_t> error_list_;   // <id, error>
 
     bool last_result_;
 
@@ -55,7 +58,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls clearParam function to clear the parameter list for Bulk Read
   ////////////////////////////////////////////////////////////////////////////////
-  virtual ~GroupBulkRead() { clearParam(); }
+  virtual ~GroupBulkRead() = default;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that adds id, start_address, data_length to the Bulk Read list

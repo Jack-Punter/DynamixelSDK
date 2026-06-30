@@ -35,7 +35,7 @@ class WINDECLSPEC GroupHandler
 {
 public:
     GroupHandler(std::shared_ptr<PortHandler> port, PacketHandler *ph);
-    virtual ~GroupHandler() = default;
+    virtual ~GroupHandler();
     std::shared_ptr<PortHandler> & getPortHandler() { return port_; }
     PacketHandler *getPacketHandler() { return ph_; }
 
